@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { TravelPlan } from "@shared/schema";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import FlightOptions from "./FlightOptions";
 import { 
   AlertCircle,
   CalendarCheck, 
@@ -21,7 +22,8 @@ import {
   Flag,
   Utensils,
   DollarSign,
-  Tag
+  Tag,
+  Plane
 } from "lucide-react";
 import { format, parseISO, differenceInDays } from "date-fns";
 import {
@@ -338,6 +340,22 @@ export default function TravelItinerary({ plan, onModifyPlan }: TravelItineraryP
             </ul>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Flight Options Section */}
+      <div className="mt-8">
+        <div className="flex items-center mb-4">
+          <Plane className="h-5 w-5 text-primary mr-2" />
+          <h3 className="text-xl font-medium text-gray-900">Available Flights</h3>
+        </div>
+        <FlightOptions
+          source={plan.source}
+          destination={plan.destination}
+          departureDate={plan.startDate.toString()}
+          returnDate={plan.endDate.toString()}
+          numTravelers={plan.travelers}
+          currencyCode={plan.currency}
+        />
       </div>
 
       {/* Actions */}
