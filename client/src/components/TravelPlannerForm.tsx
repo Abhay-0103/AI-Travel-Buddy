@@ -209,58 +209,46 @@ export default function TravelPlannerForm({ onGeneratePlan, isGenerating, onGene
                       <FormItem className="flex flex-col">
                         <FormLabel>Where are you starting from?</FormLabel>
                         <div className="relative">
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <FormControl>
-                                <div className="relative">
-                                  <MapPin className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-                                  <Input
-                                    placeholder="Enter city or airport"
-                                    className="pl-10 pr-10"
-                                    value={field.value}
-                                    onChange={(e) => {
-                                      field.onChange(e.target.value);
-                                      searchSource(e.target.value);
-                                    }}
-                                  />
-                                  <ChevronsUpDown className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
-                                </div>
-                              </FormControl>
-                            </PopoverTrigger>
-                            <PopoverContent className="p-0 w-full" align="start">
-                              <Command>
-                                <CommandInput placeholder="Search location..." className="h-9" />
-                                <CommandEmpty>No locations found.</CommandEmpty>
-                                <CommandGroup>
-                                  <ScrollArea className="h-[200px]">
-                                    {isLoadingSource ? (
-                                      <div className="flex justify-center items-center h-20">
-                                        <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
-                                      </div>
-                                    ) : (
-                                      sourceResults.map((location) => (
-                                        <CommandItem
-                                          key={location.place_id}
-                                          value={location.description}
-                                          onSelect={() => {
-                                            field.onChange(location.description);
-                                          }}
-                                        >
-                                          <Check
-                                            className={cn(
-                                              "mr-2 h-4 w-4",
-                                              field.value === location.description ? "opacity-100" : "opacity-0"
-                                            )}
-                                          />
-                                          {location.description}
-                                        </CommandItem>
-                                      ))
-                                    )}
-                                  </ScrollArea>
-                                </CommandGroup>
-                              </Command>
-                            </PopoverContent>
-                          </Popover>
+                          <div className="relative">
+                            <MapPin className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                            <FormControl>
+                              <Input
+                                placeholder="Enter city or airport"
+                                className="pl-10 pr-10"
+                                value={field.value}
+                                onChange={(e) => {
+                                  field.onChange(e.target.value);
+                                  searchSource(e.target.value);
+                                }}
+                                autoComplete="off"
+                              />
+                            </FormControl>
+                            {(sourceResults.length > 0 && field.value) && (
+                              <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto">
+                                {isLoadingSource ? (
+                                  <div className="flex justify-center items-center h-20">
+                                    <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+                                  </div>
+                                ) : (
+                                  <ul className="py-1">
+                                    {sourceResults.map((location) => (
+                                      <li 
+                                        key={location.place_id}
+                                        className={`px-3 py-2 cursor-pointer hover:bg-gray-100 ${field.value === location.description ? 'bg-gray-50' : ''}`}
+                                        onClick={() => {
+                                          field.onChange(location.description);
+                                          // Clear results after selection
+                                          searchSource("");
+                                        }}
+                                      >
+                                        {location.description}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                )}
+                              </div>
+                            )}
+                          </div>
                           <FormMessage />
                         </div>
                       </FormItem>
@@ -275,58 +263,46 @@ export default function TravelPlannerForm({ onGeneratePlan, isGenerating, onGene
                       <FormItem className="flex flex-col">
                         <FormLabel>Where would you like to go?</FormLabel>
                         <div className="relative">
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <FormControl>
-                                <div className="relative">
-                                  <Map className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-                                  <Input
-                                    placeholder="Dream destination"
-                                    className="pl-10 pr-10"
-                                    value={field.value}
-                                    onChange={(e) => {
-                                      field.onChange(e.target.value);
-                                      searchDestination(e.target.value);
-                                    }}
-                                  />
-                                  <ChevronsUpDown className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
-                                </div>
-                              </FormControl>
-                            </PopoverTrigger>
-                            <PopoverContent className="p-0 w-full" align="start">
-                              <Command>
-                                <CommandInput placeholder="Search location..." className="h-9" />
-                                <CommandEmpty>No locations found.</CommandEmpty>
-                                <CommandGroup>
-                                  <ScrollArea className="h-[200px]">
-                                    {isLoadingDestination ? (
-                                      <div className="flex justify-center items-center h-20">
-                                        <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
-                                      </div>
-                                    ) : (
-                                      destinationResults.map((location) => (
-                                        <CommandItem
-                                          key={location.place_id}
-                                          value={location.description}
-                                          onSelect={() => {
-                                            field.onChange(location.description);
-                                          }}
-                                        >
-                                          <Check
-                                            className={cn(
-                                              "mr-2 h-4 w-4",
-                                              field.value === location.description ? "opacity-100" : "opacity-0"
-                                            )}
-                                          />
-                                          {location.description}
-                                        </CommandItem>
-                                      ))
-                                    )}
-                                  </ScrollArea>
-                                </CommandGroup>
-                              </Command>
-                            </PopoverContent>
-                          </Popover>
+                          <div className="relative">
+                            <Map className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                            <FormControl>
+                              <Input
+                                placeholder="Dream destination"
+                                className="pl-10 pr-10"
+                                value={field.value}
+                                onChange={(e) => {
+                                  field.onChange(e.target.value);
+                                  searchDestination(e.target.value);
+                                }}
+                                autoComplete="off"
+                              />
+                            </FormControl>
+                            {(destinationResults.length > 0 && field.value) && (
+                              <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto">
+                                {isLoadingDestination ? (
+                                  <div className="flex justify-center items-center h-20">
+                                    <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+                                  </div>
+                                ) : (
+                                  <ul className="py-1">
+                                    {destinationResults.map((location) => (
+                                      <li 
+                                        key={location.place_id}
+                                        className={`px-3 py-2 cursor-pointer hover:bg-gray-100 ${field.value === location.description ? 'bg-gray-50' : ''}`}
+                                        onClick={() => {
+                                          field.onChange(location.description);
+                                          // Clear results after selection
+                                          searchDestination("");
+                                        }}
+                                      >
+                                        {location.description}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                )}
+                              </div>
+                            )}
+                          </div>
                           <FormMessage />
                         </div>
                       </FormItem>
