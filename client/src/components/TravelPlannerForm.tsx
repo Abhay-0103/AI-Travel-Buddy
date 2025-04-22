@@ -726,49 +726,44 @@ export default function TravelPlannerForm({ onGeneratePlan, isGenerating, onGene
                     render={() => (
                       <FormItem>
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                          {interests.map((interest) => (
-                            <FormField
-                              key={interest.value}
-                              control={form.control}
-                              name="interests"
-                              render={({ field }) => {
-                                return (
-                                  <FormItem
-                                    key={interest.value}
-                                    className="flex flex-row items-start space-x-2 space-y-0"
-                                  >
-                                    <div className="w-full">
-                                      <div className="relative">
-                                        <FormControl>
-                                          <Checkbox
-                                            checked={field.value?.includes(interest.value)}
-                                            onCheckedChange={(checked) => {
-                                              return checked
-                                                ? field.onChange([...field.value, interest.value])
-                                                : field.onChange(
-                                                    field.value?.filter(
-                                                      (value) => value !== interest.value
-                                                    )
-                                                  )
-                                            }}
-                                            id={`interest-${interest.value}`}
-                                            className="sr-only peer"
-                                          />
-                                        </FormControl>
-                                        <label
-                                          htmlFor={`interest-${interest.value}`}
-                                          className="flex flex-col items-center justify-center p-4 border rounded-lg cursor-pointer border-gray-300 peer-checked:border-primary peer-checked:bg-primary-50"
-                                        >
-                                          <span className="text-xl mb-2">{interest.icon}</span>
-                                          <span className="mt-2 text-sm font-medium text-gray-900 text-center">{interest.label}</span>
-                                        </label>
-                                      </div>
-                                    </div>
-                                  </FormItem>
-                                )
-                              }}
-                            />
-                          ))}
+                          {interests.map((interest) => {
+                            const isChecked = form.getValues("interests")?.includes(interest.value);
+                            
+                            return (
+                              <div 
+                                key={interest.value}
+                                className={`border rounded-lg p-4 cursor-pointer relative ${
+                                  isChecked 
+                                    ? 'border-primary bg-primary-50' 
+                                    : 'border-gray-300 hover:border-gray-400'
+                                }`}
+                                onClick={() => {
+                                  const currentInterests = form.getValues("interests") || [];
+                                  if (currentInterests.includes(interest.value)) {
+                                    form.setValue(
+                                      "interests", 
+                                      currentInterests.filter(value => value !== interest.value)
+                                    );
+                                  } else {
+                                    form.setValue(
+                                      "interests", 
+                                      [...currentInterests, interest.value]
+                                    );
+                                  }
+                                }}
+                              >
+                                {isChecked && (
+                                  <div className="absolute top-2 right-2">
+                                    <Check className="h-4 w-4 text-primary" />
+                                  </div>
+                                )}
+                                <div className="flex flex-col items-center justify-center">
+                                  <span className="text-xl mb-2">{interest.icon}</span>
+                                  <span className="mt-2 text-sm font-medium text-gray-900 text-center">{interest.label}</span>
+                                </div>
+                              </div>
+                            );
+                          })}
                         </div>
                         <FormMessage />
                       </FormItem>
