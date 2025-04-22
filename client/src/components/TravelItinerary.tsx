@@ -3,7 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TravelPlan } from "@shared/schema";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
 import { 
+  AlertCircle,
   CalendarCheck, 
   Edit2, 
   Save, 
@@ -22,6 +24,14 @@ import {
   Tag
 } from "lucide-react";
 import { format, parseISO, differenceInDays } from "date-fns";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface TravelItineraryProps {
   plan: TravelPlan;
@@ -29,11 +39,15 @@ interface TravelItineraryProps {
 }
 
 export default function TravelItinerary({ plan, onModifyPlan }: TravelItineraryProps) {
+  const { toast } = useToast();
   const formattedStartDate = format(parseISO(plan.startDate.toString()), 'MMM d, yyyy');
   const formattedEndDate = format(parseISO(plan.endDate.toString()), 'MMM d, yyyy');
   const numDays = differenceInDays(parseISO(plan.endDate.toString()), parseISO(plan.startDate.toString())) + 1;
   
   const [activeDay, setActiveDay] = useState(1);
+  const [showBookingDialog, setShowBookingDialog] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isBooking, setIsBooking] = useState(false);
 
   if (!plan.itinerary) {
     return <div>No itinerary available</div>;
@@ -45,6 +59,40 @@ export default function TravelItinerary({ plan, onModifyPlan }: TravelItineraryP
   const tips = itinerary.tips || [];
   const mustSeeLocations = itinerary.mustSeeLocations || [];
   const foodRecommendations = itinerary.foodRecommendations || [];
+  
+  // Function to handle saving the itinerary
+  const handleSave = () => {
+    setIsSaving(true);
+    // Simulate API call
+    setTimeout(() => {
+      setIsSaving(false);
+      toast({
+        title: "Itinerary Saved",
+        description: "Your travel plan has been saved successfully.",
+        variant: "default",
+      });
+    }, 1000);
+  };
+  
+  // Function to handle booking the trip
+  const handleBookNow = () => {
+    setShowBookingDialog(true);
+  };
+  
+  // Function to confirm booking
+  const confirmBooking = () => {
+    setIsBooking(true);
+    // Simulate API call
+    setTimeout(() => {
+      setIsBooking(false);
+      setShowBookingDialog(false);
+      toast({
+        title: "Booking Confirmed",
+        description: "Your booking request has been sent. Check your email for details.",
+        variant: "default",
+      });
+    }, 1500);
+  };
 
   return (
     <div>
@@ -61,7 +109,7 @@ export default function TravelItinerary({ plan, onModifyPlan }: TravelItineraryP
           </div>
           <CardContent className="p-6">
             <div className="flex items-center">
-              <Badge variant="success" className="bg-green-100 text-green-800 hover:bg-green-100">
+              <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">
                 <CheckCircle className="h-3 w-3 mr-1" />
                 Plan Ready
               </Badge>
@@ -306,19 +354,94 @@ export default function TravelItinerary({ plan, onModifyPlan }: TravelItineraryP
           <Button 
             variant="secondary"
             className="flex-1 sm:flex-none"
+            onClick={handleSave}
+            disabled={isSaving}
           >
-            <Save className="h-4 w-4 mr-2" />
-            Save
+            {isSaving ? (
+              <>
+                <div className="h-4 w-4 mr-2 animate-spin border-2 border-current border-t-transparent rounded-full" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4 mr-2" />
+                Save
+              </>
+            )}
           </Button>
           <Button 
             variant="default"
             className="flex-1 sm:flex-none bg-primary hover:bg-primary-700"
+            onClick={handleBookNow}
           >
             <CalendarCheck className="h-4 w-4 mr-2" />
             Book Now
           </Button>
         </div>
       </div>
+      
+      {/* Booking Dialog */}
+      <Dialog open={showBookingDialog} onOpenChange={setShowBookingDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Book Your Trip to {plan.destination}</DialogTitle>
+            <DialogDescription>
+              You're about to book a {numDays}-day adventure from {formattedStartDate} to {formattedEndDate} for {plan.travelers} travelers.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <h4 className="font-medium">Trip Summary</h4>
+              <div className="text-sm text-gray-600 space-y-1">
+                <p>From: {plan.source}</p>
+                <p>To: {plan.destination}</p>
+                <p>Dates: {formattedStartDate} - {formattedEndDate}</p>
+                <p>Travelers: {plan.travelers}</p>
+                <p>Budget: {plan.currency} {plan.budget}</p>
+              </div>
+            </div>
+            <div className="rounded-md bg-amber-50 p-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <AlertCircle className="h-5 w-5 text-amber-500" aria-hidden="true" />
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-amber-800">Booking Information</h3>
+                  <div className="mt-2 text-sm text-amber-700">
+                    <p>
+                      By proceeding, our travel specialists will start arranging your trip based on the itinerary. You will receive detailed booking information and payment options by email.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <DialogFooter className="sm:justify-end">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setShowBookingDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button 
+              type="button" 
+              onClick={confirmBooking}
+              disabled={isBooking}
+              className="bg-primary hover:bg-primary-700"
+            >
+              {isBooking ? (
+                <>
+                  <div className="h-4 w-4 mr-2 animate-spin border-2 border-current border-t-transparent rounded-full" />
+                  Processing...
+                </>
+              ) : (
+                "Confirm Booking"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
