@@ -1,0 +1,95 @@
+{
+  ...
+  "best_flights": [
+    // best_flights is not always returned
+    {
+      "flights": [
+        {
+          "departure_airport": {
+            "name": "String - Departure airport name",
+            "id": "String - Departure airport code",
+            "time": "String - Departure time"
+          },
+          "arrival_airport": {
+            "name": "String - Arrival airport name",
+            "id": "String - Arrival airport code",
+            "time": "String - Arrival time"
+          },
+          "duration": "Integer - Flight duration, in minutes",
+          "airplane": "String - Airplane model",
+          "airline": "String - Name of the airline",
+          "airline_logo": "String - URL to the logo of the airline",
+          "travel_class": "String - Travel class",
+          "flight_number": "String - The flight number",
+          "extensions": "Array - A list of flight features",
+          "ticket_also_sold_by": "Array - A list of other sellers",
+          "legroom": "String - The legroom, including unit",
+          "overnight": "Boolean - Returns 'true' if the flight is overnight",
+          "often_delayed_by_over_30_min": "Boolean - Returns 'true' if the flight is often delayed by 30+ min.",
+          "plane_and_crew_by": "String - Information about operating airline that provides the plane and the crew",
+        }
+      ],
+      "layovers": [
+        {
+          "duration": "Integer - Duration of the layover, in minutes",
+          "name": "String - Name of the airport for the layover",
+          "id": "String - The airport code for the layover",
+          "overnight": "Boolean - Returns 'true' if the layover is overnight",
+        }
+      ],
+      "total_duration": "Integer - Total minutes of all flights and layovers",
+      "carbon_emissions": {
+        "this_flight": "Integer - The amount of carbon emissions of the flight, in grams",
+        "typical_for_this_route": "Integer - Typical amount of carbon emissions for the route, in grams",
+        "difference_percent": "Integer - The carbon emissions difference between the flight and typical value, in percent",
+      },
+      "price": "Integer - This ticket price in the selected currency, the default currency is USD",
+      "type": "String - The type of the flight. It's a reflection of the request parameter `type`",
+      "airline_logo": "String - URL to the logo of mixed airlines",
+      "extensions": "Array - A list of features of the entire flight",
+      "departure_token": "String - The token for retrieving returning flights when the flight type is 'Round trip'",
+      "booking_token": "String - The token for retrieving booking options for selected flights",
+    }
+  ],
+  "other_flights": [
+    // The same structure as best_flights
+    // When the results are not separated into best_flights and other_flights, they are in other_flights
+  ]
+  "price_insights": {
+    "lowest_price": "Integer - The lowest price among the returned flights",
+    "price_level": "String - Price level of the lowest_price",
+    "typical_price_range": "Array - A two-integer array, indicating the low bound and high bound of 'typical' price of this flight",
+    "price_history": "Array - A two-integer array, where the first element is the timestamp, and the second one is the price",
+  },
+  "airports": [
+    {
+      "departure": [
+        {
+          "airport": {
+            "name": "String - Departure airport name",
+            "id": "String - Departure airport code"
+          },
+          "city": "String - Departure city",
+          "country": "String - Departure country name",
+          "country_code": "String - Departure country code",
+          "image": "String - URL to the image of the departure city",
+          "thumbnail": "String - URL to the thumbnail image of the departure city"
+        },
+      ],
+      "arrival": [
+        {
+          "airport": {
+            "name": "String - Arrival airport name",
+            "id": "String - Arrival airport code"
+          },
+          "city": "String - Arrival city",
+          "country": "String - Arrival country name",
+          "country_code": "String - Arrival country code",
+          "image": "String - URL to the image of the arrival city",
+          "thumbnail": "String - URL to the thumbnail image of the arrival city"
+        },
+      ]
+    },
+  ],
+  ...
+}

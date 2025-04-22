@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { generateGeminiResponse } from "./gemini";
+import { getRecommendedFlights } from "./flights";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Put application routes here
@@ -71,6 +72,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error generating travel plan:', error);
       res.status(500).json({ error: 'Failed to generate travel plan' });
+    }
+  });
+
+  // Search for flights endpoint
+  app.get('/api/flights', async (req, res) => {
+    try {
+      const { source, destination, departureDate, returnDate } = req.query;
+      
+      if (!source || !destination || !departureDate) {
+        return res.status(400).json({ 
+          error: "Missing required parameters. Please provide source, destination, and departureDate." 
+        });
+      }
+      
+      const flights = await getRecommendedFlights(
+        source as string, 
+        destination as string,
+        departureDate as string,
+        returnDate as string
+      );
+      
+      res.json(flights);
+    } catch (error) {
+      console.error("Error searching for flights:", error);
+      res.status(500).json({ error: "Failed to search for flights" });
     }
   });
 
